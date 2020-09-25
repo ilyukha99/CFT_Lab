@@ -1,7 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Main {
 
@@ -20,7 +21,7 @@ public class Main {
         if (Validator.options.contains("-d")) {
             Sorter.flag = -1;
         }
-        
+
         ArrayList<Path> sortedFiles = new ArrayList<>();
         ArrayList<Path> unsortedFiles = new ArrayList<>();
         for (Path path : Validator.inPutFilesPaths) {
@@ -30,12 +31,39 @@ public class Main {
             else unsortedFiles.add(path);
         }
 
-        System.out.println(sortedFiles + " " + unsortedFiles);
-
         if (Validator.options.contains("-s")) {
-            String[] result;
-        }
+            String[] tmp = {};
+            for (int it = 0; sortedFiles.size() - it > 1; it += 2) {
+                String[] strings = Objects.requireNonNull(FileWorker.readFile(sortedFiles.get(it)).toArray(new String[1]));
+                String[] strings1 = Objects.requireNonNull(FileWorker.readFile(sortedFiles.get(it + 1)).toArray(new String[1]));
+                tmp = new String[strings.length + strings1.length];
+                Sorter.merge(strings, strings1, tmp);
+            }
 
+            String[] sortedResult = {};
+            if (sortedFiles.size() % 2 == 1) {
+                String[] strings = Objects.requireNonNull
+                        (FileWorker.readFile(sortedFiles.get(sortedFiles.size() - 1)).toArray(new String[1]));
+                sortedResult = new String[tmp.length + strings.length];
+                Sorter.merge(tmp, strings, sortedResult);
+            }
+            sortedResult = (sortedFiles.size() % 2 == 1) ? sortedResult : tmp;
+            Arrays.asList(sortedResult).forEach(System.out::println);
+
+            ArrayList<String> list = new ArrayList<>();
+            for (Path path : unsortedFiles) {
+                list.addAll(FileWorker.readFile(path));
+            }
+            String[] anotherResult = list.toArray(new String[1]);
+            Sorter.sortString(anotherResult);
+
+            if (sortedFiles.size() > 0 && unsortedFiles.size() > 0) {
+                FileWorker.writeFile(Validator.outPutFilePath, Sorter.merge(sortedResult,
+                        anotherResult, new String[sortedResult.length + anotherResult.length]));
+            }
+            else FileWorker.writeFile(Validator.outPutFilePath,
+                    (sortedFiles.size() == 0) ? anotherResult : sortedResult);
+        }
     }
 }
 //        if (Validator.options.contains("-s")) {

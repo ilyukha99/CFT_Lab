@@ -9,11 +9,16 @@ import java.nio.charset.StandardCharsets;
 
 public class FileWorker {
 
-    public static List<String> readFile(Path path) throws IOException {
+    public static List<String> readFile(Path path) {
         if (Files.isReadable(path) && !Files.isDirectory(path)) {
-            return Files.lines(path).collect(Collectors.toList());
+            try {
+                return Files.lines(path).collect(Collectors.toList());
+            }
+            catch (IOException exc) {
+                System.err.println(exc.getMessage());
+            }
         }
-        else return null;
+        return null;
     }
 
     public static <T> void writeFile(Path path, T[] lines) throws IOException {
@@ -30,7 +35,7 @@ public class FileWorker {
         catch(IOException exc) { System.err.println(exc.getMessage()); }
     }
 
-    public static boolean checkFileSort(Path path) throws IOException {
+    public static boolean checkFileSort(Path path) {
         List<String> lines = readFile(path);
         if (Validator.options.contains("-i") && lines != null) {
             Integer tmp = Integer.parseInt(lines.get(0));

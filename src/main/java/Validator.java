@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Validator {
-    public static String options;
+    public static String options = "";
     public static List<Path> inPutFilesPaths = new ArrayList<>();
     public static Path outPutFilePath;
 
