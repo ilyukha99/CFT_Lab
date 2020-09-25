@@ -21,7 +21,7 @@ public class FileWorker {
         return null;
     }
 
-    public static <T> void writeFile(Path path, T[] lines) throws IOException {
+    public static <T> void writeFile(Path path, List<T> lines) throws IOException {
         if (!Files.isDirectory(path)) {
             Files.deleteIfExists(path);
         }

@@ -1,67 +1,87 @@
+import java.util.List;
+import java.util.ArrayList;
+
 public class Sorter {
     public static int flag = 1; //1 if -a, -1 if -d
 
-    public static void sortString(String[] array) throws NullPointerException{
-        if (array == null) {
+    public static void sortString(List<String> list) throws NullPointerException{
+        if (list == null) {
             throw new NullPointerException("An array seems to be null.");
         }
 
-        if (array.length == 1) {
+        if (list.size() == 1) {
             return;
         }
 
-        String[] first = new String[array.length / 2];
-        String[] second = new String[array.length - first.length];
+        List<String> first = new ArrayList<>();
+        int size = list.size() / 2;
+        for (int it = 0; it < size; ++it) {
+            first.add(it, list.get(it));
+        }
 
-        System.arraycopy(array, 0, first, 0, array.length / 2);
-        System.arraycopy(array, array.length/2, second, 0, array.length - first.length);
+        List<String> second = new ArrayList<>();
+        size = list.size() - list.size() / 2;
+        for (int it = 0; it < size; ++it) {
+            second.add(it, list.get(it + first.size()));
+        }
 
         sortString(first);
         sortString(second);
-        merge(first, second, array);
+        merge(first, second, list);
     }
 
-    public static void sortInt(Integer[] array) {
-        if (array == null) {
+    public static void sortInt(List<Integer> list) {
+        if (list == null) {
             throw new NullPointerException("An array seems to be null.");
         }
 
-        if (array.length == 1) {
+        if (list.size() == 1) {
             return;
         }
 
-        Integer[] first = new Integer[array.length / 2];
-        Integer[] second = new Integer[array.length - first.length];
+        List<Integer> first = new ArrayList<>();
+        int size = list.size() / 2;
+        for (int it = 0; it < size; ++it) {
+            first.add(it, list.get(it));
+        }
 
-        System.arraycopy(array, 0, first, 0, array.length / 2);
-        System.arraycopy(array, array.length/2, second, 0, array.length - first.length);
+        List<Integer> second = new ArrayList<>();
+        size = list.size() - list.size() / 2;
+        for (int it = 0; it < size; ++it) {
+            second.add(it, list.get(it + first.size()));
+        }
 
         sortInt(first);
         sortInt(second);
-        merge(first, second, array);
+        merge(first, second, list);
     }
 
-    public static <T extends Comparable<T>> T[] merge(T[] firstArr, T[] secondArr, T[] result) {
+    public static <T extends Comparable<T>> List<T> merge(List<T> firstList, List<T> secondList, List<T> result) {
         int firstMin = 0, secondMin = 0, resultMin = 0;
-        while (firstMin < firstArr.length && secondMin < secondArr.length) {
-            if (firstArr[firstMin].compareTo(secondArr[secondMin]) * flag < 0) {
-                result[resultMin] = firstArr[firstMin];
+        while (firstMin < firstList.size() && secondMin < secondList.size()) {
+            if (firstList.get(firstMin).compareTo(secondList.get(secondMin)) * flag < 0) {
+                result.set(resultMin, firstList.get(firstMin));
                 ++firstMin;
             }
             else {
-                result[resultMin] = secondArr[secondMin];
+                result.set(resultMin, secondList.get(secondMin));
                 ++secondMin;
             }
             ++resultMin;
         }
 
-        if (firstMin == firstArr.length) {
-            System.arraycopy(secondArr, secondMin, result, firstMin + secondMin, result.length - firstMin - secondMin);
+        if (firstMin == firstList.size()) {
+            int size = firstMin + secondList.size();
+            for (int it = firstMin + secondMin; it < size; ++it) {
+                result.set(it, secondList.get(it - firstMin));
+            }
         }
         else {
-            System.arraycopy(firstArr, firstMin, result, firstMin + secondMin, result.length - firstMin - secondMin);
+            int size = secondMin + firstList.size();
+            for (int it = firstMin + secondMin; it < size; ++it) {
+                result.set(it, firstList.get(it - secondMin));
+            }
         }
-
         return result;
     }
 }
