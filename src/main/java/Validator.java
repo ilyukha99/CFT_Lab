@@ -13,7 +13,7 @@ public class Validator {
         List<String> keys = info.getFirst();
         List<String> fileNames = info.getSecond();
 
-        if (keys.size() == 0) {
+        if (!keys.contains("-s") && !keys.contains("-i")) {
             throw new IllegalArgumentException("Too few arguments. There must be either -s or -i.");
         }
 

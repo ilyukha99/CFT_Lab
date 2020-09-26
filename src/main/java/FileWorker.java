@@ -9,10 +9,10 @@ import java.nio.charset.StandardCharsets;
 
 public class FileWorker {
 
-    public static List<String> readFile(Path path) {
+    public static MyArrayList<String> readFile(Path path) {
         if (Files.isReadable(path) && !Files.isDirectory(path)) {
             try {
-                return Files.lines(path).collect(Collectors.toList());
+                return Files.lines(path).collect(Collectors.toCollection(MyArrayList::new));
             }
             catch (IOException exc) {
                 System.err.println(exc.getMessage());
@@ -41,7 +41,7 @@ public class FileWorker {
             Integer tmp = Integer.parseInt(lines.get(0));
             int size = lines.size();
             for (int it = 1; it < size; ++it) {
-                if (tmp.compareTo(Integer.parseInt(lines.get(it))) > 0) {
+                if (tmp.compareTo(Integer.parseInt(lines.get(it))) * Sorter.flag > 0) {
                     return false;
                 }
                 tmp = Integer.parseInt(lines.get(it));
@@ -53,7 +53,7 @@ public class FileWorker {
             String tmp = lines.get(0);
             int size = lines.size();
             for (int it = 1; it < size; ++it) {
-                if (tmp.compareTo(lines.get(it)) > 0) {
+                if (tmp.compareTo(lines.get(it)) * Sorter.flag > 0) {
                     return false;
                 }
                 tmp = lines.get(it);

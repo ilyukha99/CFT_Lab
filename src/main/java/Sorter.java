@@ -1,10 +1,7 @@
-import java.util.List;
-import java.util.ArrayList;
-
 public class Sorter {
     public static int flag = 1; //1 if -a, -1 if -d
 
-    public static void sortString(List<String> list) throws NullPointerException{
+    public static void sortStrings(MyArrayList<String> list) throws NullPointerException {
         if (list == null) {
             throw new NullPointerException("An array seems to be null.");
         }
@@ -13,24 +10,24 @@ public class Sorter {
             return;
         }
 
-        List<String> first = new ArrayList<>();
+        MyArrayList<String> first = new MyArrayList<>();
         int size = list.size() / 2;
         for (int it = 0; it < size; ++it) {
             first.add(it, list.get(it));
         }
 
-        List<String> second = new ArrayList<>();
+        MyArrayList<String> second = new MyArrayList<>();
         size = list.size() - list.size() / 2;
         for (int it = 0; it < size; ++it) {
             second.add(it, list.get(it + first.size()));
         }
 
-        sortString(first);
-        sortString(second);
+        sortStrings(first);
+        sortStrings(second);
         merge(first, second, list);
     }
 
-    public static void sortInt(List<Integer> list) {
+    public static void sortInts(MyArrayList<Integer> list) {
         if (list == null) {
             throw new NullPointerException("An array seems to be null.");
         }
@@ -39,24 +36,25 @@ public class Sorter {
             return;
         }
 
-        List<Integer> first = new ArrayList<>();
+        MyArrayList<Integer> first = new MyArrayList<>();
         int size = list.size() / 2;
         for (int it = 0; it < size; ++it) {
             first.add(it, list.get(it));
         }
 
-        List<Integer> second = new ArrayList<>();
+        MyArrayList<Integer> second = new MyArrayList<>();
         size = list.size() - list.size() / 2;
         for (int it = 0; it < size; ++it) {
             second.add(it, list.get(it + first.size()));
         }
 
-        sortInt(first);
-        sortInt(second);
+        sortInts(first);
+        sortInts(second);
         merge(first, second, list);
     }
 
-    public static <T extends Comparable<T>> List<T> merge(List<T> firstList, List<T> secondList, List<T> result) {
+    public static <T extends Comparable<T>> void merge(MyArrayList<T> firstList,
+                                                                 MyArrayList<T> secondList, MyArrayList<T> result) {
         int firstMin = 0, secondMin = 0, resultMin = 0;
         while (firstMin < firstList.size() && secondMin < secondList.size()) {
             if (firstList.get(firstMin).compareTo(secondList.get(secondMin)) * flag < 0) {
@@ -82,6 +80,5 @@ public class Sorter {
                 result.set(it, firstList.get(it - secondMin));
             }
         }
-        return result;
     }
 }
