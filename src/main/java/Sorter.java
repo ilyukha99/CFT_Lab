@@ -1,7 +1,7 @@
 public class Sorter {
     public static int flag = 1; //1 if -a, -1 if -d
 
-    public static void sortStrings(MyArrayList<String> list) throws NullPointerException {
+    public static <T extends Comparable<T>> void sort(MyArrayList<T> list) {
         if (list == null) {
             throw new NullPointerException("An array seems to be null.");
         }
@@ -10,46 +10,20 @@ public class Sorter {
             return;
         }
 
-        MyArrayList<String> first = new MyArrayList<>();
+        MyArrayList<T> first = new MyArrayList<>();
         int size = list.size() / 2;
         for (int it = 0; it < size; ++it) {
             first.add(it, list.get(it));
         }
 
-        MyArrayList<String> second = new MyArrayList<>();
+        MyArrayList<T> second = new MyArrayList<>();
         size = list.size() - list.size() / 2;
         for (int it = 0; it < size; ++it) {
             second.add(it, list.get(it + first.size()));
         }
 
-        sortStrings(first);
-        sortStrings(second);
-        merge(first, second, list);
-    }
-
-    public static void sortInts(MyArrayList<Integer> list) {
-        if (list == null) {
-            throw new NullPointerException("An array seems to be null.");
-        }
-
-        if (list.size() == 1) {
-            return;
-        }
-
-        MyArrayList<Integer> first = new MyArrayList<>();
-        int size = list.size() / 2;
-        for (int it = 0; it < size; ++it) {
-            first.add(it, list.get(it));
-        }
-
-        MyArrayList<Integer> second = new MyArrayList<>();
-        size = list.size() - list.size() / 2;
-        for (int it = 0; it < size; ++it) {
-            second.add(it, list.get(it + first.size()));
-        }
-
-        sortInts(first);
-        sortInts(second);
+        sort(first);
+        sort(second);
         merge(first, second, list);
     }
 

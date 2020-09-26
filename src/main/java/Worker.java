@@ -34,7 +34,7 @@ public class Worker {
 
         for (Path path : unsortedFiles) {
             MyArrayList<String> lines = FileWorker.readFile(path);
-            Sorter.sortStrings(lines);
+            Sorter.sort(lines);
             dataList.add(lines);
         }
 
@@ -58,7 +58,7 @@ public class Worker {
         for (Path path : unsortedFiles) {
             MyArrayList<Integer> lines = FileWorker.readFile(path).stream().map(
                     Integer::parseInt).collect(Collectors.toCollection(MyArrayList::new));
-            Sorter.sortInts(lines);
+            Sorter.sort(lines);
             dataList.add(lines);
         }
 
