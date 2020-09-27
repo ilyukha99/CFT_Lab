@@ -172,6 +172,7 @@ public class Worker {
                 }
             }
         }
+        writer.close();
     }
 
     public static void BigFilesStringRoutine(ArrayList<Scanner> scanners, BufferedWriter writer,
@@ -202,7 +203,6 @@ public class Worker {
         while (smallFiles.size() > 0 || scanners.size() > 0) {
             int extremum = findExtremumInd(buffer); //an index of the largest/smallest element
             writer.write(buffer.get(extremum) + "\n");
-            writer.flush();
             if (extremum < scanners.size()) {
                 Scanner curScanner = scanners.get(extremum);
                 if (curScanner.hasNext()) {
@@ -225,6 +225,7 @@ public class Worker {
                 }
             }
         }
+        writer.close();
     }
 
     public static <T extends Comparable<T>> int findExtremumInd(MyArrayList<T> buffer) {

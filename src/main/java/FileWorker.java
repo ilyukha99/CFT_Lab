@@ -30,12 +30,13 @@ public class FileWorker {
                 writer.write(line.toString() + "\n");
             }
             writer.flush();
+            writer.close();
         }
     }
 
     public static boolean checkFileSort(Path path) throws IOException {
         if ((Files.isReadable(path) && !Files.isDirectory(path)))
-        try(Scanner scanner = new Scanner(path)) {
+        try(Scanner scanner = new Scanner(path).useDelimiter("\\n")) {
             if (scanner.hasNextInt() && Validator.options.contains("-i")) {
                 int val = scanner.nextInt(), nextVal;
                 while(scanner.hasNext()) {
