@@ -8,10 +8,6 @@ import java.nio.file.Files;
 public class Worker {
 
     public static void startRoutine() throws IOException {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("Termination.")));
-        if (Validator.options.contains("-d")) {
-            Sorter.flag = -1;
-        }
 
         ArrayList<Path> sortedFiles = new ArrayList<>();
         ArrayList<Path> unsortedFiles = new ArrayList<>();
@@ -90,10 +86,6 @@ public class Worker {
     }
 
     public static void workWithBigFiles() throws IOException {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("Termination.")));
-        if (Validator.options.contains("-d")) {
-            Sorter.flag = -1;
-        }
 
         long systemFreeMem = Runtime.getRuntime().freeMemory() - 2_097_152; // -2Mb (correction)
         ArrayList<Path> bigFiles = new ArrayList<>(), smallFilesPath = new ArrayList<>();
@@ -112,7 +104,7 @@ public class Worker {
                 iterator.remove();
                 System.out.println("File " + path + "will not be merged. Cause: big weight.");
             }
-            else scanners.add(new Scanner(path));
+            else scanners.add(new Scanner(path).useDelimiter("\\n"));
         }
 
         BufferedWriter writer = FileWorker.getWriter(Validator.outPutFilePath);
@@ -164,19 +156,19 @@ public class Worker {
                     buffer.set(extremum, curScanner.nextInt());
                 }
                 else {
-                    removeFromList(scanners, curScanner);
-                    removeFromList(buffer, buffer.get(extremum));
+                    scanners.remove(curScanner);
+                    buffer.remove(buffer.get(extremum));
                 }
             }
             else {
                 ArrayList<Integer> curList = smallFiles.get(extremum - scanners.size());
-                removeFromList(curList, buffer.get(extremum));
+                curList.remove(buffer.get(extremum));
                 if (curList.size() > 0) {
                     buffer.set(extremum, curList.get(0));
                 }
                 else {
-                    removeFromList(smallFiles, curList);
-                    removeFromList(buffer, buffer.get(extremum));
+                    smallFiles.remove(curList);
+                    buffer.remove(buffer.get(extremum));
                 }
             }
         }
@@ -217,19 +209,19 @@ public class Worker {
                     buffer.set(extremum, curScanner.next());
                 }
                 else {
-                    removeFromList(scanners, curScanner);
-                    removeFromList(buffer, buffer.get(extremum));
+                    scanners.remove(curScanner);
+                    buffer.remove(buffer.get(extremum));
                 }
             }
             else {
                 ArrayList<String> curList = smallFiles.get(extremum - scanners.size());
-                removeFromList(curList, buffer.get(extremum));
+                curList.remove(buffer.get(extremum));
                 if (curList.size() > 0) {
                     buffer.set(extremum, curList.get(0));
                 }
                 else {
-                    removeFromList(smallFiles, curList);
-                    removeFromList(buffer, buffer.get(extremum));
+                    smallFiles.remove(curList);
+                    buffer.remove(buffer.get(extremum));
                 }
             }
         }
@@ -249,14 +241,16 @@ public class Worker {
         return index;
     }
 
+    //might be more safe to use (uses Iterator.remove())
     public static <T> void removeFromList(ArrayList<T> list, T value) {
         Iterator<T> iter = list.iterator();
         while (iter.hasNext()) {
-            if (iter.next() != value) {
+            if (!iter.next().equals(value)) {
                 continue;
             }
             iter.remove();
             return;
         }
+        list.remove(value);
     }
 }
