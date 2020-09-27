@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Parser {
-    private static final String[] allOptions = { "-s", "-i", "-a", "-d" };
+    private static final String[] allOptions = { "-s", "-i", "-a", "-d", "-bf" };
 
     public static Pair<List<String>, List<String>> parseArgs(String[] args) {
         List<String> optionList = Arrays.asList(allOptions);

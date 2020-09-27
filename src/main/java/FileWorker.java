@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import static java.nio.file.StandardOpenOption.*;
 import java.nio.charset.StandardCharsets;
@@ -22,44 +23,57 @@ public class FileWorker {
     }
 
     public static <T> void writeFile(Path path, List<T> lines) throws IOException {
-        if (!Files.isDirectory(path)) {
-            Files.deleteIfExists(path);
-        }
-        else throw new IllegalArgumentException("Can't write to a directory file.");
 
-        try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, CREATE_NEW, WRITE)) {
+        BufferedWriter writer = getWriter(path);
+        if (writer != null) {
             for (T line : lines) {
                 writer.write(line.toString() + "\n");
             }
+            writer.flush();
         }
-        catch(IOException exc) { System.err.println(exc.getMessage()); }
     }
 
-    public static boolean checkFileSort(Path path) {
-        List<String> lines = readFile(path);
-        if (Validator.options.contains("-i") && lines != null) {
-            Integer tmp = Integer.parseInt(lines.get(0));
-            int size = lines.size();
-            for (int it = 1; it < size; ++it) {
-                if (tmp.compareTo(Integer.parseInt(lines.get(it))) * Sorter.flag > 0) {
-                    return false;
+    public static boolean checkFileSort(Path path) throws IOException {
+        if ((Files.isReadable(path) && !Files.isDirectory(path)))
+        try(Scanner scanner = new Scanner(path)) {
+            if (scanner.hasNextInt() && Validator.options.contains("-i")) {
+                int val = scanner.nextInt(), nextVal;
+                while(scanner.hasNext()) {
+                    nextVal = scanner.nextInt();
+                    if ((val - nextVal) * Sorter.flag > 0) {
+                        return false;
+                    }
+                    val = nextVal;
                 }
-                tmp = Integer.parseInt(lines.get(it));
+                return true;
             }
-            return true;
-        }
-
-        else if (Validator.options.contains("-s") && lines != null) {
-            String tmp = lines.get(0);
-            int size = lines.size();
-            for (int it = 1; it < size; ++it) {
-                if (tmp.compareTo(lines.get(it)) * Sorter.flag > 0) {
-                    return false;
+            if (scanner.hasNext() && Validator.options.contains(("-s"))) {
+                String str = scanner.next(), nextStr;
+                while (scanner.hasNext()) {
+                    nextStr = scanner.next();
+                    if (str.compareTo(nextStr) * Sorter.flag > 0) {
+                        return false;
+                    }
+                    str = nextStr;
                 }
-                tmp = lines.get(it);
+                return true;
             }
-            return true;
         }
         return false;
+    }
+
+    public static BufferedWriter getWriter(Path path) {
+
+        try {
+            if (!Files.isDirectory(Validator.outPutFilePath)) {
+                Files.deleteIfExists(Validator.outPutFilePath);
+            } else throw new IllegalArgumentException("Can't write to a directory file.");
+
+             return Files.newBufferedWriter(path, StandardCharsets.UTF_8, CREATE_NEW, WRITE);
+        }
+        catch (IOException exc) {
+            System.err.println(exc.getMessage());
+        }
+        return null;
     }
 }
